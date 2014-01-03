@@ -40,7 +40,7 @@ sections.utils.forEach = function (array, callback) {
   for (i = 0; i < len; i += 1) {
     val = array[i];
     if (callback(val, i) === false) {
-      break;
+        return false;
     }
   }
 };
