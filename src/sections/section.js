@@ -1,10 +1,12 @@
 sections.Section = (function () {
-  var Section = function (element, sections_) {
+  var Section = function (element, container, sections_) {
     sections.events.EventEmitter.call(this);
     this.sections = sections_;
     this.element = element;
+    this.container = container || {style: {}};
     this.updatePosition();
     this.progress = 0;
+    this.visible = true;
     this.__transitions = [];
     this.__transitionTargets = [];
   };
@@ -30,6 +32,20 @@ sections.Section = (function () {
       top: y,
       left: x
     };
+  };
+
+  Section.prototype.show = function () {
+    if (!this.visible) {
+      this.container.style.display = 'block';
+      this.visible = true;
+    }
+  };
+
+  Section.prototype.hide = function () {
+    if (this.visible) {
+      this.container.style.display = 'none';
+      this.visible = false;
+    }
   };
 
   Section.prototype.getCSS = function (key) {
@@ -71,6 +87,7 @@ sections.Section = (function () {
     var newTransitions = this.__transitions;
     sections.utils.forEach(transitions, (function (transition, i) {
       transition.target = transition.target || transition.targets || [];
+      transition.prefix === undefined && (transition.prefix = sections.utils.needPrefix(transition.key));
       var targets = (transition.target instanceof Array) ? transition.target : [transition.target];
       sections.utils.forEach(targets, (function (target, i) {
         var data = sections.utils.clone(transition);
